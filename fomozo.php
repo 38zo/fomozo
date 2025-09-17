@@ -83,7 +83,23 @@ final class FOMOZO_Plugin {
         $autoloader = FOMOZO_PATH . 'vendor/autoload.php';
         if (file_exists($autoloader)) {
             require_once $autoloader;
+            return;
         }
+
+        // Fallback simple PSR-4 autoloader for development environments without Composer
+        spl_autoload_register(function($class) {
+            $prefix = 'FOMOZO\\';
+            $base_dir = FOMOZO_PATH . 'src/';
+            $len = strlen($prefix);
+            if (strncmp($prefix, $class, $len) !== 0) {
+                return;
+            }
+            $relative_class = substr($class, $len);
+            $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+            if (file_exists($file)) {
+                require $file;
+            }
+        });
     }
     
     /**
