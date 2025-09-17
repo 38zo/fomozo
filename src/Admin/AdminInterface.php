@@ -366,17 +366,7 @@ class AdminInterface {
                         </td>
                     </tr>
                     
-                    <tr>
-                        <th scope="row"><?php _e('Branding', 'fomozo'); ?></th>
-                        <td>
-                            <label>
-                                <input type="checkbox" name="show_branding" value="1" 
-                                       <?php checked(get_option('fomozo_show_branding', true)); ?>>
-                                <?php _e('Show "Powered by FOMOZO" link', 'fomozo'); ?>
-                            </label>
-                            <p class="description"><?php _e('Remove branding with Pro version', 'fomozo'); ?></p>
-                        </td>
-                    </tr>
+                    
                 </table>
                 
                 <?php submit_button(); ?>
@@ -458,7 +448,6 @@ class AdminInterface {
      */
     private function save_settings() {
         update_option('fomozo_anonymize_users', !empty($_POST['anonymize_users']));
-        update_option('fomozo_show_branding', !empty($_POST['show_branding']));
         
         add_action('admin_notices', function() {
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Settings saved successfully!', 'fomozo') . '</p></div>';
