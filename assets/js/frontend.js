@@ -5,7 +5,10 @@
 	var state = {
 		queue: [],
 		isShowing: false,
-		settings: (typeof fomozo_ajax === 'object' && fomozo_ajax.settings) ? fomozo_ajax.settings : {}
+		settings: (typeof fomozo_ajax === 'object' && fomozo_ajax.settings) ? fomozo_ajax.settings : {},
+		refetchMs: 45000, // how often to refetch when idle
+		betweenMsMin: 3000,
+		betweenMsMax: 7000
 	};
 
 	function fetchNotifications() {
@@ -15,16 +18,29 @@
 			nonce: fomozo_ajax.nonce
 		}).done(function (res) {
 			if (res && res.success && Array.isArray(res.data)) {
-				state.queue = res.data;
-				showNext();
+				state.queue = shuffle(res.data.slice());
+				if (!state.isShowing) {
+					showNext();
+				}
+			} else {
+				scheduleRefetch();
 			}
-		});
+		}).fail(scheduleRefetch);
+	}
+
+	function scheduleRefetch() {
+		setTimeout(fetchNotifications, state.refetchMs);
+	}
+
+	function nextGap() {
+		var min = state.betweenMsMin, max = state.betweenMsMax;
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
 	function showNext() {
 		if (state.isShowing) { return; }
 		var item = state.queue.shift();
-		if (!item) { return; }
+		if (!item) { scheduleRefetch(); return; }
 		state.isShowing = true;
 
 		var $root = $('#fomozo-root');
@@ -47,7 +63,12 @@
 			setTimeout(function () {
 				$popup.remove();
 				state.isShowing = false;
-				showNext();
+				// when queue empties, refetch to get fresh data
+				if (state.queue.length === 0) {
+					fetchNotifications();
+				} else {
+					setTimeout(showNext, nextGap());
+				}
 			}, 300);
 		}, duration);
 	}
@@ -72,6 +93,16 @@
 			campaign_id: item.id,
 			page_url: window.location.href
 		});
+	}
+
+	function shuffle(arr) {
+		for (var i = arr.length - 1; i > 0; i--) {
+			var j = Math.floor(Math.random() * (i + 1));
+			var t = arr[i];
+			arr[i] = arr[j];
+			arr[j] = t;
+		}
+		return arr;
 	}
 
 	function escapeHtml(str) {
