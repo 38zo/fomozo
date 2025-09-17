@@ -53,10 +53,11 @@ class WooProvider {
 	public static function build_notifications($campaigns) {
 		if (!function_exists('wc_get_orders')) { return []; }
 		$orders = wc_get_orders([
-			'limit' => 10,
+			'limit' => 15,
 			'orderby' => 'date',
 			'order' => 'DESC',
-			'status' => array('processing', 'completed'),
+			// Include common sales-related statuses to avoid empty results on fresh stores
+			'status' => array('completed', 'processing', 'on-hold', 'pending'),
 		]);
 		if (empty($orders)) { return []; }
 

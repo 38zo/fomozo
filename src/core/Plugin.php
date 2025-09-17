@@ -268,9 +268,13 @@ class Plugin {
         $campaigns = $this->get_active_campaigns();
         $notifications = [];
         
-        foreach ($campaigns as $campaign) {
-            if ($campaign->type === 'sales') {
-                $notifications[] = $this->generate_sales_notification($campaign);
+        // If demo is enabled, generate internal demo notifications; otherwise rely on integrations
+        if (get_option('fomozo_enable_demo_data', 0)) {
+            foreach ($campaigns as $campaign) {
+                if ($campaign->type === 'sales') {
+                    $maybe = $this->generate_sales_notification($campaign);
+                    if ($maybe) { $notifications[] = $maybe; }
+                }
             }
         }
         // Allow integrations to provide notifications (e.g., WooCommerce)
@@ -288,7 +292,7 @@ class Plugin {
     private function generate_sales_notification($campaign) {
         $settings = json_decode($campaign->settings, true);
         
-        // Use demo data only if enabled
+        // Demo generator only when explicitly enabled
         $recent_sale = null;
         if (get_option('fomozo_enable_demo_data', 0)) {
             $recent_sale = $this->get_recent_sale($settings);
