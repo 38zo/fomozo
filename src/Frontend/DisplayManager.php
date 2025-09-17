@@ -59,12 +59,7 @@ class DisplayManager {
 	 * @param bool $echo Whether to echo directly (default true)
 	 */
 	public function render_container($echo = true) {
-		$branding = '';
-		if (get_option('fomozo_show_branding', true)) {
-			$branding = '<div class="fomozo-branding"><a href="https://example.com" target="_blank" rel="nofollow noopener">Powered by FOMOZO</a></div>';
-		}
-
-		$container = '<div id="fomozo-root" class="fomozo-root" aria-live="polite" aria-atomic="true"></div>' . $branding;
+		$container = '<div id="fomozo-root" class="fomozo-root" aria-live="polite" aria-atomic="true"></div>';
 
 		if ($echo === false) {
 			echo $container; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

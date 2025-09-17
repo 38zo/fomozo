@@ -56,9 +56,10 @@
 		var templateClass = 'fomozo-template-' + (item.template || 'bottom-left');
 		var html = '' +
 			'<div class="fomozo-popup ' + templateClass + '">' +
-			'	<div class="fomozo-popup-inner">' +
-			'		<div class="fomozo-message">' + escapeHtml(item.message || '') + '</div>' +
-			'	</div>' +
+			'\t<div class="fomozo-popup-inner">' +
+			'\t\t<div class="fomozo-message">' + escapeHtml(item.message || '') + '</div>' +
+			'\t\t<div class="fomozo-popup-branding"><a href="https://example.com" target="_blank" rel="nofollow noopener">Powered by FOMOZO</a></div>' +
+			'\t</div>' +
 			'</div>';
 		return $(html);
 	}

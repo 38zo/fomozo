@@ -314,7 +314,8 @@ class Plugin {
             'product' => $demo_products[array_rand($demo_products)],
             'location' => $demo_locations[array_rand($demo_locations)],
             'time' => rand(1, 30) . ' minutes ago',
-            'customer' => $this->generate_anonymous_name($settings['anonymize'] ?? true)
+            // Always respect current global option dynamically
+            'customer' => $this->generate_anonymous_name(get_option('fomozo_anonymize_users', true))
         ];
     }
     
