@@ -82,7 +82,12 @@ class AdminInterface {
         $stats = $this->get_dashboard_stats();
         ?>
         <div class="wrap">
-            <h1><?php _e('FOMOZO Dashboard', 'fomozo'); ?></h1>
+            <h1 class="fomozo-dashboard-header">
+                <?php _e('FOMOZO Dashboard', 'fomozo'); ?>
+                <a href="<?php echo admin_url('admin.php?page=fomozo-campaigns&action=new'); ?>" class="page-title-action">
+                    <?php _e('Create New Campaign', 'fomozo'); ?>
+                </a>
+            </h1>
             
             <div class="fomozo-dashboard">
                 <div class="fomozo-stats">
@@ -102,16 +107,6 @@ class AdminInterface {
                         <h3><?php echo esc_html($stats['impressions_today']); ?></h3>
                         <p><?php _e('Today\'s Impressions', 'fomozo'); ?></p>
                     </div>
-                </div>
-                
-                <div class="fomozo-quick-actions">
-                    <h2><?php _e('Quick Actions', 'fomozo'); ?></h2>
-                    <a href="<?php echo admin_url('admin.php?page=fomozo-campaigns&action=new'); ?>" class="button button-primary">
-                        <?php _e('Create New Campaign', 'fomozo'); ?>
-                    </a>
-                    <a href="<?php echo admin_url('admin.php?page=fomozo-settings'); ?>" class="button">
-                        <?php _e('Plugin Settings', 'fomozo'); ?>
-                    </a>
                 </div>
                 
                 <?php if (empty($stats['total_campaigns'])): ?>
