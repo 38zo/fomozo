@@ -377,8 +377,6 @@ class AdminInterface {
                             <p class="description"><?php _e('Global delay between popups once one hides and the next shows.', 'fomozo'); ?></p>
                         </td>
                     </tr>
-                    
-                    
                 </table>
                 
                 <?php submit_button(); ?>
@@ -484,14 +482,22 @@ class AdminInterface {
         
         $campaigns_table = $wpdb->prefix . 'fomozo_campaigns';
         $analytics_table = $wpdb->prefix . 'fomozo_analytics';
+
+        // Compute start of today and start of tomorrow in site timezone
+        $tz_timestamp = current_time('timestamp');
+        $start_of_today = strtotime('today', $tz_timestamp);
+        $start_of_tomorrow = strtotime('tomorrow', $tz_timestamp);
+        $start_str = date('Y-m-d H:i:s', $start_of_today);
+        $end_str = date('Y-m-d H:i:s', $start_of_tomorrow);
         
         return [
             'total_campaigns' => $wpdb->get_var("SELECT COUNT(*) FROM {$campaigns_table}"),
             'active_campaigns' => $wpdb->get_var("SELECT COUNT(*) FROM {$campaigns_table} WHERE status = 'active'"),
             'total_impressions' => $wpdb->get_var("SELECT COUNT(*) FROM {$analytics_table} WHERE type = 'impression'"),
             'impressions_today' => $wpdb->get_var($wpdb->prepare(
-                "SELECT COUNT(*) FROM {$analytics_table} WHERE type = 'impression' AND DATE(created_at) = %s",
-                current_time('Y-m-d')
+                "SELECT COUNT(*) FROM {$analytics_table} WHERE type = 'impression' AND created_at >= %s AND created_at < %s",
+                $start_str,
+                $end_str
             ))
         ];
     }
