@@ -189,7 +189,8 @@ class Plugin {
         return [
             'enable_sound' => get_option('fomozo_enable_sound', false),
             'animation_speed' => get_option('fomozo_animation_speed', 500),
-            'debug_mode' => defined('WP_DEBUG') && WP_DEBUG
+            'debug_mode' => defined('WP_DEBUG') && WP_DEBUG,
+            'gap_ms' => (int) get_option('fomozo_gap_ms', 4000)
         ];
     }
     

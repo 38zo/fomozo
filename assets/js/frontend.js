@@ -8,8 +8,42 @@
 		settings: (typeof fomozo_ajax === 'object' && fomozo_ajax.settings) ? fomozo_ajax.settings : {},
 		refetchMs: 45000, // how often to refetch when idle
 		betweenMsMin: 3000,
-		betweenMsMax: 7000
+		betweenMsMax: 7000,
+		recent: [],
+		cooldownMs: 5 * 60 * 1000 // do not repeat the same item within 5 minutes
 	};
+
+	function now() { return Date.now(); }
+
+	function itemKey(item) {
+		// Prefer message content to distinguish items; fall back to id
+		return (item && item.message ? String(item.message) : ('id:' + (item && item.id ? item.id : '0')));
+	}
+
+	function pruneRecent() {
+		var cutoff = now() - state.cooldownMs;
+		state.recent = state.recent.filter(function (r) { return r.t >= cutoff; });
+	}
+
+	function isRecentlyShown(key) {
+		pruneRecent();
+		for (var i = 0; i < state.recent.length; i++) {
+			if (state.recent[i].k === key) { return true; }
+		}
+		return false;
+	}
+
+	function markShown(key) {
+		state.recent.push({ k: key, t: now() });
+		pruneRecent();
+	}
+
+	function effectiveGap() {
+		if (state.settings && typeof state.settings.gap_ms === 'number') {
+			return Math.max(0, state.settings.gap_ms);
+		}
+		return nextGap();
+	}
 
 	function fetchNotifications() {
 		if (typeof fomozo_ajax !== 'object') { return; }
@@ -18,8 +52,17 @@
 			nonce: fomozo_ajax.nonce
 		}).done(function (res) {
 			if (res && res.success && Array.isArray(res.data)) {
-				state.queue = shuffle(res.data.slice());
+				var incoming = res.data.slice();
+				// Filter out items recently shown
+				var filtered = [];
+				for (var i = 0; i < incoming.length; i++) {
+					var key = itemKey(incoming[i]);
+					if (!isRecentlyShown(key)) { filtered.push(incoming[i]); }
+				}
+				state.queue = shuffle(filtered);
 				if (!state.isShowing) {
+					// If still empty, schedule another try later
+					if (state.queue.length === 0) { scheduleRefetch(); return; }
 					showNext();
 				}
 			} else {
@@ -55,6 +98,7 @@
 		setTimeout(function () {
 			$popup.addClass('fomozo-visible');
 			sendImpression(item);
+			markShown(itemKey(item));
 		}, item.delay || state.settings.animation_speed || 300);
 
 		var duration = item.duration || 5000;
@@ -67,7 +111,7 @@
 				if (state.queue.length === 0) {
 					fetchNotifications();
 				} else {
-					setTimeout(showNext, nextGap());
+					setTimeout(showNext, effectiveGap());
 				}
 			}, 300);
 		}, duration);

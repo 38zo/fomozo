@@ -84,7 +84,8 @@ class Activator {
             'fomozo_animation_speed' => 500,
             'fomozo_default_delay' => 3000,
             'fomozo_default_duration' => 5000,
-            'fomozo_anonymize_users' => true
+            'fomozo_anonymize_users' => true,
+            'fomozo_gap_ms' => 4000
         ];
         
         foreach ($defaults as $option => $value) {

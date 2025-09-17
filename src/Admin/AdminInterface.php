@@ -365,6 +365,18 @@ class AdminInterface {
                             </label>
                         </td>
                     </tr>
+
+                    <tr>
+                        <th scope="row">
+                            <label for="fomozo_gap_ms"><?php _e('Gap Between Popups (ms)', 'fomozo'); ?></label>
+                        </th>
+                        <td>
+                            <input type="number" id="fomozo_gap_ms" name="fomozo_gap_ms" 
+                                   value="<?php echo esc_attr(get_option('fomozo_gap_ms', 4000)); ?>" 
+                                   min="0" max="60000" step="250">
+                            <p class="description"><?php _e('Global delay between popups once one hides and the next shows.', 'fomozo'); ?></p>
+                        </td>
+                    </tr>
                     
                     
                 </table>
@@ -448,6 +460,9 @@ class AdminInterface {
      */
     private function save_settings() {
         update_option('fomozo_anonymize_users', !empty($_POST['anonymize_users']));
+        if (isset($_POST['fomozo_gap_ms'])) {
+            update_option('fomozo_gap_ms', max(0, intval($_POST['fomozo_gap_ms'])));
+        }
         
         add_action('admin_notices', function() {
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Settings saved successfully!', 'fomozo') . '</p></div>';
