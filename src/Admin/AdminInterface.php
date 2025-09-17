@@ -346,43 +346,79 @@ class AdminInterface {
      * Settings page
      */
     public function settings_page() {
+        $schema = \FOMOZO\Core\Settings::get_schema();
+        $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : array_key_first($schema['tabs']);
+        if (!isset($schema['tabs'][$active_tab])) { $active_tab = array_key_first($schema['tabs']); }
         ?>
         <div class="wrap">
             <h1><?php _e('FOMOZO Settings', 'fomozo'); ?></h1>
-            
+
+            <h2 class="nav-tab-wrapper">
+                <?php foreach ($schema['tabs'] as $tab_id => $tab): ?>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=fomozo-settings&tab=' . $tab_id)); ?>" class="nav-tab <?php echo $tab_id === $active_tab ? 'nav-tab-active' : ''; ?>">
+                        <?php echo esc_html($tab['title']); ?>
+                    </a>
+                <?php endforeach; ?>
+            </h2>
+
             <form method="post" action="">
                 <?php wp_nonce_field('fomozo_save_settings', 'fomozo_nonce'); ?>
                 <input type="hidden" name="action" value="save_settings">
-                
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><?php _e('Privacy Settings', 'fomozo'); ?></th>
-                        <td>
-                            <label>
-                                <input type="checkbox" name="anonymize_users" value="1" 
-                                       <?php checked(get_option('fomozo_anonymize_users', true)); ?>>
-                                <?php _e('Anonymize customer names (e.g., "John D." instead of "John Doe")', 'fomozo'); ?>
-                            </label>
-                        </td>
-                    </tr>
+                <input type="hidden" name="tab" value="<?php echo esc_attr($active_tab); ?>">
 
-                    <tr>
-                        <th scope="row">
-                            <label for="fomozo_gap_ms"><?php _e('Gap Between Popups (ms)', 'fomozo'); ?></label>
-                        </th>
-                        <td>
-                            <input type="number" id="fomozo_gap_ms" name="fomozo_gap_ms" 
-                                   value="<?php echo esc_attr(get_option('fomozo_gap_ms', 4000)); ?>" 
-                                   min="0" max="60000" step="250">
-                            <p class="description"><?php _e('Global delay between popups once one hides and the next shows.', 'fomozo'); ?></p>
-                        </td>
-                    </tr>
-                </table>
-                
+                <?php foreach ($schema['tabs'][$active_tab]['sections'] as $section_id => $section): ?>
+                    <h2><?php echo esc_html($section['title']); ?></h2>
+                    <table class="form-table">
+                        <?php foreach ($section['fields'] as $field): ?>
+                            <tr>
+                                <th scope="row">
+                                    <label for="<?php echo esc_attr($field['id']); ?>"><?php echo esc_html($field['title']); ?></label>
+                                </th>
+                                <td>
+                                    <?php echo $this->render_field($field); // escaped in renderer ?>
+                                    <?php if (!empty($field['desc'])): ?>
+                                        <p class="description"><?php echo esc_html($field['desc']); ?></p>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
+                <?php endforeach; ?>
+
                 <?php submit_button(); ?>
             </form>
         </div>
         <?php
+    }
+
+    private function render_field($field) {
+        $id = $field['id'];
+        $type = $field['type'] ?? 'text';
+        $value = \FOMOZO\Core\Settings::get($id, $field['default'] ?? '');
+        $attrs = $field['attrs'] ?? [];
+
+        $attr_html = '';
+        foreach ($attrs as $k => $v) {
+            $attr_html .= ' ' . esc_attr($k) . '="' . esc_attr($v) . '"';
+        }
+
+        switch ($type) {
+            case 'checkbox':
+                return '<label><input type="checkbox" id="' . esc_attr($id) . '" name="' . esc_attr($id) . '" value="1" ' . checked((int)$value, 1, false) . '> ' . esc_html($field['title']) . '</label>';
+            case 'number':
+                return '<input type="number" id="' . esc_attr($id) . '" name="' . esc_attr($id) . '" value="' . esc_attr($value) . '"' . $attr_html . ' />';
+            case 'select':
+                $html = '<select id="' . esc_attr($id) . '" name="' . esc_attr($id) . '"' . $attr_html . '>';
+                $choices = $field['choices'] ?? [];
+                foreach ($choices as $key => $label) {
+                    $html .= '<option value="' . esc_attr($key) . '" ' . selected($value, $key, false) . '>' . esc_html($label) . '</option>';
+                }
+                $html .= '</select>';
+                return $html;
+            case 'text':
+            default:
+                return '<input type="text" id="' . esc_attr($id) . '" name="' . esc_attr($id) . '" value="' . esc_attr($value) . '"' . $attr_html . ' />';
+        }
     }
     
     /**
@@ -457,11 +493,20 @@ class AdminInterface {
      * Save settings
      */
     private function save_settings() {
-        update_option('fomozo_anonymize_users', !empty($_POST['anonymize_users']));
-        if (isset($_POST['fomozo_gap_ms'])) {
-            update_option('fomozo_gap_ms', max(0, intval($_POST['fomozo_gap_ms'])));
+        $schema = \FOMOZO\Core\Settings::get_schema();
+        foreach ($schema['tabs'] as $tab) {
+            foreach ($tab['sections'] as $section) {
+                foreach ($section['fields'] as $field) {
+                    $id = $field['id'];
+                    $raw = $_POST[$id] ?? null;
+                    $sanitized = \FOMOZO\Core\Settings::sanitize_field($field, $raw);
+                    update_option($id, $sanitized);
+                }
+            }
         }
-        
+
+        do_action('fomozo_settings_saved');
+
         add_action('admin_notices', function() {
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Settings saved successfully!', 'fomozo') . '</p></div>';
         });
