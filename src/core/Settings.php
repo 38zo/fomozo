@@ -44,12 +44,36 @@ class Settings {
 							'title' => __('Behaviour', 'fomozo'),
 							'fields' => [
 								[
+									'id' => 'fomozo_enable_demo_data',
+									'title' => __('Enable Demo Notifications', 'fomozo'),
+									'type' => 'checkbox',
+									'default' => 0,
+									'desc' => __('Show sample notifications when real data is not desired. Off by default.', 'fomozo')
+								],
+								[
 									'id' => 'fomozo_gap_ms',
 									'title' => __('Gap Between Popups (ms)', 'fomozo'),
 									'type' => 'number',
 									'default' => 4000,
 									'attrs' => ['min' => 0, 'max' => 60000, 'step' => 250],
 									'desc' => __('Delay between popups after one hides and before the next shows.', 'fomozo')
+								]
+							]
+						]
+					]
+				],
+				'advanced' => [
+					'title' => __('Advanced', 'fomozo'),
+					'sections' => [
+						'uninstall' => [
+							'title' => __('Uninstall', 'fomozo'),
+							'fields' => [
+								[
+									'id' => 'fomozo_remove_data_on_uninstall',
+									'title' => __('Remove all plugin data on uninstall', 'fomozo'),
+									'type' => 'checkbox',
+									'default' => 0,
+									'desc' => __('Irreversible: deletes tables and options when the plugin is deleted.', 'fomozo')
 								]
 							]
 						]

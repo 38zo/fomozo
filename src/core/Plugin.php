@@ -11,6 +11,8 @@ namespace FOMOZO\Core;
 use FOMOZO\Admin\AdminInterface;
 use FOMOZO\Frontend\DisplayManager;
 use FOMOZO\Database\DatabaseManager;
+use FOMOZO\Integrations\IntegrationManager;
+use FOMOZO\Integrations\WooCommerce\WooCommerceIntegration;
 
 /**
  * Main plugin core class
@@ -33,6 +35,7 @@ class Plugin {
     private $admin;
     private $frontend;
     private $database;
+    private $integrations;
     
     /**
      * Constructor
@@ -73,6 +76,13 @@ class Plugin {
         if (!is_admin()) {
             $this->frontend = new DisplayManager();
         }
+
+        // Initialize integrations and register built-ins via action so any manager instance sees them
+        add_action('fomozo_integrations_register', function($manager) {
+            // Register built-in WooCommerce integration
+            $manager->register(new WooCommerceIntegration());
+        });
+        $this->integrations = new IntegrationManager();
     }
     
     /**
@@ -263,7 +273,12 @@ class Plugin {
                 $notifications[] = $this->generate_sales_notification($campaign);
             }
         }
-        
+        // Allow integrations to provide notifications (e.g., WooCommerce)
+        $external = apply_filters('fomozo_external_notifications', [], $campaigns);
+        if (is_array($external)) {
+            $notifications = array_merge($notifications, $external);
+        }
+
         return array_filter($notifications);
     }
     
@@ -273,8 +288,11 @@ class Plugin {
     private function generate_sales_notification($campaign) {
         $settings = json_decode($campaign->settings, true);
         
-        // Get recent orders or generate fake data for demo
-        $recent_sale = $this->get_recent_sale($settings);
+        // Use demo data only if enabled
+        $recent_sale = null;
+        if (get_option('fomozo_enable_demo_data', 0)) {
+            $recent_sale = $this->get_recent_sale($settings);
+        }
         
         if (!$recent_sale) {
             return null;

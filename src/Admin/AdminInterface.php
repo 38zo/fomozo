@@ -19,6 +19,89 @@ class AdminInterface {
     public function __construct() {
         $this->init_hooks();
     }
+
+    /**
+     * Integrations page
+     */
+    public function integrations_page() {
+        $manager = new \FOMOZO\Integrations\IntegrationManager();
+        $all = $manager->get_all();
+        $query = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
+        if (!empty($_POST['fomozo_toggle_integration']) && check_admin_referer('fomozo_integrations')) {
+            $id = sanitize_text_field($_POST['integration_id'] ?? '');
+            $action = sanitize_text_field($_POST['integration_action'] ?? '');
+            if ($action === 'activate') { $manager->activate($id); }
+            if ($action === 'deactivate') { $manager->deactivate($id); }
+            wp_safe_redirect(admin_url('admin.php?page=fomozo-integrations'));
+            exit;
+        }
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Integrations', 'fomozo'); ?></h1>
+            <form method="get" action="" style="margin:10px 0;">
+                <input type="hidden" name="page" value="fomozo-integrations" />
+                <p class="search-box">
+                    <label class="screen-reader-text" for="fomozo-int-search"><?php _e('Search Integrations', 'fomozo'); ?></label>
+                    <input type="search" id="fomozo-int-search" name="s" value="<?php echo esc_attr($query); ?>" />
+                    <input type="submit" class="button" value="<?php _e('Search Integrations', 'fomozo'); ?>" />
+                </p>
+            </form>
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th><?php _e('Integration', 'fomozo'); ?></th>
+                        <th><?php _e('Description', 'fomozo'); ?></th>
+                        <th><?php _e('Status', 'fomozo'); ?></th>
+                        <th><?php _e('Actions', 'fomozo'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($all as $id => $integration):
+                        $title = $integration->get_title();
+                        if ($query && stripos($title, $query) === false) { continue; }
+                        $active = $manager->is_active($id);
+                        $available = $integration->is_available();
+                        ?>
+                        <tr>
+                            <td style="display:flex;align-items:center;gap:10px;">
+                                <img src="<?php echo esc_url($integration->get_logo_url()); ?>" alt="" style="width:28px;height:28px;object-fit:contain;" />
+                                <strong><?php echo esc_html($integration->get_title()); ?></strong>
+                            </td>
+                            <td><?php echo esc_html($integration->get_description()); ?></td>
+                            <td>
+                                <?php if (!$available): ?>
+                                    <span class="status status-inactive"><?php _e('Unavailable', 'fomozo'); ?></span>
+                                <?php else: ?>
+                                    <span class="status <?php echo $active ? 'status-active' : 'status-inactive'; ?>">
+                                        <?php echo $active ? esc_html__('Active', 'fomozo') : esc_html__('Inactive', 'fomozo'); ?>
+                                    </span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if ($available): ?>
+                                <form method="post" style="display:inline;">
+                                    <?php wp_nonce_field('fomozo_integrations'); ?>
+                                    <input type="hidden" name="fomozo_toggle_integration" value="1" />
+                                    <input type="hidden" name="integration_id" value="<?php echo esc_attr($id); ?>" />
+                                    <?php if ($active): ?>
+                                        <input type="hidden" name="integration_action" value="deactivate" />
+                                        <button class="button"><?php _e('Deactivate', 'fomozo'); ?></button>
+                                    <?php else: ?>
+                                        <input type="hidden" name="integration_action" value="activate" />
+                                        <button class="button button-primary"><?php _e('Activate', 'fomozo'); ?></button>
+                                    <?php endif; ?>
+                                </form>
+                                <?php else: ?>
+                                    <em><?php _e('Install the dependency to enable.', 'fomozo'); ?></em>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
+    }
     
     /**
      * Initialize admin hooks
@@ -72,6 +155,16 @@ class AdminInterface {
             'manage_options',
             'fomozo-settings',
             [$this, 'settings_page']
+        );
+
+        // Integrations
+        add_submenu_page(
+            'fomozo',
+            __('Integrations', 'fomozo'),
+            __('Integrations', 'fomozo'),
+            'manage_options',
+            'fomozo-integrations',
+            [$this, 'integrations_page']
         );
     }
     
