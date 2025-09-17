@@ -15,11 +15,14 @@
     padding: 20px;
     text-align: center;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: box-shadow 0.2s ease;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .stat-box:hover {
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    border-color: #0073aa;
 }
 
 .stat-box h3 {
@@ -45,6 +48,12 @@
     border-radius: 4px;
     padding: 20px;
     margin: 20px 0;
+    transition: all 0.3s ease;
+}
+
+.fomozo-quick-actions:hover {
+    background: #f0f0f0;
+    border-color: #0073aa;
 }
 
 .fomozo-quick-actions h2 {
@@ -55,6 +64,18 @@
 .fomozo-quick-actions .button {
     margin-right: 10px;
     margin-bottom: 10px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.fomozo-quick-actions .button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.fomozo-quick-actions .button:active {
+    transform: translateY(0);
 }
 
 /* Welcome Section */
@@ -105,6 +126,13 @@
     background: #f9f9f9;
     border: 2px dashed #ddd;
     border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.fomozo-campaigns-list .no-campaigns:hover {
+    background: #f0f0f0;
+    border-color: #0073aa;
+    transform: translateY(-2px);
 }
 
 .fomozo-campaigns-list .no-campaigns p {
@@ -121,6 +149,13 @@
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.status:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .status-active {
@@ -146,6 +181,43 @@
 .fomozo-campaigns-list .large-text {
     width: 100%;
     max-width: 500px;
+    transition: all 0.3s ease;
+}
+
+.fomozo-campaigns-list .large-text:focus {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+    outline: none;
+}
+
+/* Table Row Hover Effects */
+.fomozo-campaigns-list tbody tr {
+    transition: all 0.3s ease;
+}
+
+.fomozo-campaigns-list tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateX(4px);
+}
+
+.fomozo-campaigns-list tbody tr:hover td {
+    border-color: #0073aa;
+}
+
+/* Button Hover Effects */
+.fomozo-campaigns-list .button-small {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.fomozo-campaigns-list .button-small:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.fomozo-campaigns-list .button-small:active {
+    transform: translateY(0);
 }
 
 /* Responsive */
