@@ -44,6 +44,9 @@ Yes, you can change the message content and where it appears.
 1. Example WooCommerce sales notification on the front-end.  
 2. FOMOZO Dashboard inside WordPress.  
 3. Campaigns page where you manage your notifications.  
+4. Integrations page showing connected plugins.  
+5. Settings page for customizing notifications.  
+6. Select Campaign Type wizard setting.
 
 == Changelog ==
 = 0.1.0 =  
