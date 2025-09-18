@@ -18,6 +18,30 @@
 }
 
 /* Dashboard Stats Grid */
+/* Wizard Layout */
+.fomozo-wizard{display:flex;gap:24px;margin-top:10px}
+.fomozo-wizard-sidebar{width:240px;background:#fff;border:1px solid #ccd0d4;border-radius:4px;padding:12px}
+.fomozo-int-list{list-style:none;margin:0;padding:0}
+.fomozo-int-list li{margin:0}
+.fomozo-int-link,.fomozo-int-name{display:block;padding:10px 12px;border-radius:4px;color:#1d2327;text-decoration:none;transition:all .2s}
+.fomozo-int-link:hover,.fomozo-int-name:hover{background:#f0f0f1}
+.fomozo-int-list li.active .fomozo-int-name{background:#e9f5ff;border-left:3px solid #0073aa;padding-left:9px}
+.fomozo-wizard-main{flex:1;background:#fff;border:1px solid #ccd0d4;border-radius:4px;padding:16px;min-height:240px}
+.fomozo-empty-state{color:#666;padding:20px}
+
+.fomozo-type-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.fomozo-card{border:1px solid #e2e4e7;border-radius:6px;background:#fff;display:flex;flex-direction:column;justify-content:space-between}
+.fomozo-card-body{padding:16px}
+.fomozo-card-icon{font-size:24px;width:24px;height:24px;color:#6c7781;margin-right:6px;vertical-align:middle}
+.fomozo-card-title{margin:0 0 6px 0}
+.fomozo-card-desc{margin:0 0 12px 0;color:#555}
+.fomozo-card-actions{padding:12px 16px;border-top:1px solid #f0f0f1;background:#fafafa}
+.fomozo-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08);transform:translateY(-1px);transition:all .2s}
+
+@media (max-width: 782px){
+  .fomozo-wizard{flex-direction:column}
+  .fomozo-wizard-sidebar{width:auto}
+}
 .fomozo-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

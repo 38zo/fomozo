@@ -225,7 +225,7 @@ class AdminInterface {
         
         switch ($action) {
             case 'new':
-                $this->render_campaign_form();
+                $this->render_campaign_wizard_or_form();
                 break;
             case 'edit':
                 $this->render_campaign_form($campaign_id);
@@ -238,6 +238,140 @@ class AdminInterface {
                 $this->render_campaigns_list();
                 break;
         }
+    }
+    
+    /**
+     * Wizard router: integration -> type -> audience -> form
+     */
+    private function render_campaign_wizard_or_form() {
+        $integration = sanitize_text_field($_GET['integration'] ?? '');
+        $type = sanitize_text_field($_GET['type'] ?? '');
+        $audience = sanitize_text_field($_GET['audience'] ?? '');
+
+        // Step 1: pick integration
+        if (!$integration) {
+            $this->render_wizard_pick_integration();
+            return;
+        }
+
+        // Step 2: pick campaign type for the integration
+        if (!$type) {
+            $this->render_wizard_pick_type($integration);
+            return;
+        }
+
+        // Step 3: pick audience
+        if (!$audience) {
+            $this->render_wizard_pick_audience($integration, $type);
+            return;
+        }
+
+        // Final: campaign form prefilled
+        $prefill = [
+            'integration' => $integration,
+            'campaign_subtype' => $type,
+            'audience' => $audience,
+        ];
+        $this->render_campaign_form(0, $prefill);
+    }
+
+    private function render_wizard_pick_integration() {
+        $manager = new \FOMOZO\Integrations\IntegrationManager();
+        $all = $manager->get_all();
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Select Integration', 'fomozo'); ?></h1>
+            <div class="fomozo-wizard">
+                <div class="fomozo-wizard-sidebar">
+                    <ul class="fomozo-int-list">
+                        <?php foreach ($all as $id => $integration): ?>
+                            <li>
+                                <a class="fomozo-int-link" href="<?php echo esc_url(admin_url('admin.php?page=fomozo-campaigns&action=new&integration=' . $id)); ?>">
+                                    <span class="fomozo-int-name"><?php echo esc_html($integration->get_title()); ?></span>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <div class="fomozo-wizard-main">
+                    <div class="fomozo-empty-state"><?php _e('Choose an integration from the left to continue.', 'fomozo'); ?></div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    private function render_wizard_pick_type($integration) {
+        $types = apply_filters('fomozo_campaign_types', [], $integration);
+        if (empty($types) && $integration === 'woocommerce') {
+            $types = [
+                [
+                    'id' => 'sales',
+                    'title' => __('Sales Campaign', 'fomozo'),
+                    'desc' => __('Show recent purchases from your WooCommerce store.', 'fomozo'),
+                    'icon' => 'cart',
+                ],
+            ];
+        }
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Select Campaign Type', 'fomozo'); ?></h1>
+            <div class="fomozo-wizard">
+                <div class="fomozo-wizard-sidebar">
+                    <ul class="fomozo-int-list">
+                        <li class="active"><span class="fomozo-int-name"><?php echo esc_html(ucfirst($integration)); ?></span></li>
+                    </ul>
+                </div>
+                <div class="fomozo-wizard-main">
+                    <div class="fomozo-type-cards">
+                        <?php foreach ($types as $t): ?>
+                            <div class="fomozo-card">
+                                <div class="fomozo-card-body">
+                                    <?php if (!empty($t['icon'])): ?>
+                                        <span class="dashicons dashicons-<?php echo esc_attr($t['icon']); ?> fomozo-card-icon"></span>
+                                    <?php endif; ?>
+                                    <h3 class="fomozo-card-title"><?php echo esc_html($t['title']); ?></h3>
+                                    <p class="fomozo-card-desc"><?php echo esc_html($t['desc'] ?? ''); ?></p>
+                                </div>
+                                <div class="fomozo-card-actions">
+                                    <a class="button button-primary" href="<?php echo esc_url(admin_url('admin.php?page=fomozo-campaigns&action=new&integration=' . $integration . '&type=' . $t['id'])); ?>"><?php _e('Select', 'fomozo'); ?></a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    private function render_wizard_pick_audience($integration, $type) {
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Who should see it?', 'fomozo'); ?></h1>
+            <div class="fomozo-wizard">
+                <div class="fomozo-wizard-sidebar">
+                    <ul class="fomozo-int-list">
+                        <li class="active"><span class="fomozo-int-name"><?php echo esc_html(ucfirst($integration)); ?></span></li>
+                    </ul>
+                </div>
+                <div class="fomozo-wizard-main">
+                    <div class="fomozo-type-cards">
+                        <div class="fomozo-card">
+                            <div class="fomozo-card-body">
+                                <span class="dashicons dashicons-visibility fomozo-card-icon"></span>
+                                <h3 class="fomozo-card-title"><?php _e('Everyone', 'fomozo'); ?></h3>
+                                <p class="fomozo-card-desc"><?php _e('Show notifications to all visitors on matching pages.', 'fomozo'); ?></p>
+                            </div>
+                            <div class="fomozo-card-actions">
+                                <a class="button button-primary" href="<?php echo esc_url(admin_url('admin.php?page=fomozo-campaigns&action=new&integration=' . $integration . '&type=' . $type . '&audience=everyone')); ?>"><?php _e('Select', 'fomozo'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
     }
     
     /**
@@ -268,6 +402,7 @@ class AdminInterface {
                             <tr>
                                 <th><?php _e('Name', 'fomozo'); ?></th>
                                 <th><?php _e('Type', 'fomozo'); ?></th>
+                                <th><?php _e('Source', 'fomozo'); ?></th>
                                 <th><?php _e('Status', 'fomozo'); ?></th>
                                 <th><?php _e('Impressions', 'fomozo'); ?></th>
                                 <th><?php _e('Created', 'fomozo'); ?></th>
@@ -279,6 +414,7 @@ class AdminInterface {
                             <tr>
                                 <td><strong><?php echo esc_html($campaign->name); ?></strong></td>
                                 <td><?php echo esc_html(ucfirst($campaign->type)); ?></td>
+                                <td><?php $cs = json_decode($campaign->settings, true); $src = $cs['integration'] ?? ''; echo $src ? esc_html(ucfirst($src)) : esc_html__('Default', 'fomozo'); ?></td>
                                 <td>
                                     <span class="status status-<?php echo esc_attr($campaign->status); ?>">
                                         <?php echo esc_html(ucfirst($campaign->status)); ?>
@@ -309,9 +445,9 @@ class AdminInterface {
     /**
      * Render campaign form
      */
-    private function render_campaign_form($campaign_id = 0) {
+    private function render_campaign_form($campaign_id = 0, $prefill = []) {
         $campaign = $campaign_id ? $this->get_campaign($campaign_id) : null;
-        $settings = $campaign ? json_decode($campaign->settings, true) : [];
+        $settings = $campaign ? json_decode($campaign->settings, true) : $prefill;
         
         ?>
         <div class="wrap">
@@ -321,6 +457,9 @@ class AdminInterface {
                 <?php wp_nonce_field('fomozo_save_campaign', 'fomozo_nonce'); ?>
                 <input type="hidden" name="action" value="save_campaign">
                 <input type="hidden" name="campaign_id" value="<?php echo esc_attr($campaign_id); ?>">
+                <input type="hidden" name="integration" value="<?php echo esc_attr($settings['integration'] ?? ''); ?>">
+                <input type="hidden" name="campaign_subtype" value="<?php echo esc_attr($settings['campaign_subtype'] ?? ''); ?>">
+                <input type="hidden" name="audience" value="<?php echo esc_attr($settings['audience'] ?? ''); ?>">
                 
                 <table class="form-table">
                     <tr>
@@ -334,19 +473,8 @@ class AdminInterface {
                         </td>
                     </tr>
                     
-                    <tr>
-                        <th scope="row">
-                            <label for="campaign_type"><?php _e('Campaign Type', 'fomozo'); ?></label>
-                        </th>
-                        <td>
-                            <select id="campaign_type" name="campaign_type" required>
-                                <option value="sales" <?php selected($campaign->type ?? '', 'sales'); ?>>
-                                    <?php _e('Sales Notifications', 'fomozo'); ?>
-                                </option>
-                            </select>
-                            <p class="description"><?php _e('More types available in Pro version', 'fomozo'); ?></p>
-                        </td>
-                    </tr>
+                    <!-- Campaign type is chosen in the wizard; keep as hidden input for backward compatibility -->
+                    <input type="hidden" id="campaign_type" name="campaign_type" value="<?php echo esc_attr($campaign->type ?? 'sales'); ?>" />
                     
                     <tr>
                         <th scope="row">
@@ -551,7 +679,10 @@ class AdminInterface {
             'display_rules' => [
                 'sitewide' => !empty($_POST['sitewide'])
             ],
-            'anonymize' => get_option('fomozo_anonymize_users', true)
+            'anonymize' => get_option('fomozo_anonymize_users', true),
+            'integration' => sanitize_text_field($_POST['integration'] ?? ''),
+            'campaign_subtype' => sanitize_text_field($_POST['campaign_subtype'] ?? ''),
+            'audience' => sanitize_text_field($_POST['audience'] ?? ''),
         ];
         
         $data = [

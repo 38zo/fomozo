@@ -50,9 +50,18 @@ class WooCommerceIntegration implements IntegrationInterface {
 namespace FOMOZO\Integrations\WooCommerce;
 
 class WooProvider {
-	public static function build_notifications($campaigns) {
-		if (!function_exists('wc_get_orders')) { return []; }
-		$orders = wc_get_orders([
+    public static function build_notifications($campaigns) {
+        if (!function_exists('wc_get_orders')) { return []; }
+        // Only campaigns configured for Woo sales (or generic sales) are considered
+        $woocommerceCampaigns = array_filter((array)$campaigns, function($c) {
+            $s = json_decode($c->settings ?? '{}', true);
+            $int = $s['integration'] ?? '';
+            $sub = $s['campaign_subtype'] ?? '';
+            return $c->type === 'sales' && ($int === '' || $int === 'woocommerce') && ($sub === '' || $sub === 'sales');
+        });
+        if (empty($woocommerceCampaigns)) { return []; }
+
+        $orders = wc_get_orders([
 			'limit' => 15,
 			'orderby' => 'date',
 			'order' => 'DESC',
@@ -62,7 +71,7 @@ class WooProvider {
 		if (empty($orders)) { return []; }
 
 		$notifications = [];
-		foreach ($campaigns as $campaign) {
+        foreach ($woocommerceCampaigns as $campaign) {
 			if ($campaign->type !== 'sales') { continue; }
 			$settings = json_decode($campaign->settings, true);
 			$order = $orders[array_rand($orders)];
