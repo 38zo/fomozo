@@ -1,54 +1,46 @@
-=== FOMOZO ===
-Contributors: fomozo
-Tags: woocommerce, social proof, fomo, sales, notifications, newsletter, marketing
-Requires at least: 5.0
-Tested up to: 6.6
-Requires PHP: 7.4
-Stable tag: 0.1.0
-License: GPLv3 or later
-License URI: https://www.gnu.org/licenses/gpl-3.0.html
+# FOMOZO 🚀  
+**Social Proof & FOMO Notifications for WordPress**
 
-Boost conversions with FOMOZO: Real-time WooCommerce sales notifications for WordPress.
+FOMOZO helps boost conversions on your WordPress site by showing **real-time WooCommerce sales notifications**.  
+When visitors see others purchasing, it builds **trust** and creates **urgency (FOMO)** — leading to more sales.
 
-== Description ==
-FOMOZO helps you increase trust and boost conversions by showing real-time WooCommerce sales notifications on your WordPress site.  
-When visitors see that others are buying, they are more likely to take action — creating social proof and a sense of urgency (FOMO).
+👉 Current focus: WooCommerce sales notifications  
+✨ Coming soon: Newsletter subscriptions, reviews, and more integrations  
 
-Right now, FOMOZO integrates with WooCommerce to display recent sales.  
+---
 
-🚀 **More features and integrations are coming soon**, including:  
-* Newsletter subscriptions (integrating with popular marketing plugins)  
-* Customer reviews  
-* Custom events  
+## Features
+- ✅ Real-time WooCommerce sales notifications  
+- 🛠 Customizable notification text & display position  
+- ⚡ Lightweight and performance-friendly  
+- 🎯 Easy setup — works out of the box  
+- 🚀 Future-ready with more integrations coming soon  
 
-== Features ==
-* Display recent WooCommerce sales notifications  
-* Customize notification text and display position  
-* Lightweight and performance-focused  
-* Easy to set up — works right after activation  
-* More features and integrations coming soon  
+---
 
-== Installation ==
-1. Upload the plugin files to the `/wp-content/plugins/fomozo` directory, or install it through the WordPress plugins screen.  
-2. Activate the plugin through the ‘Plugins’ screen in WordPress.  
-3. Configure the plugin settings under **WooCommerce > FOMOZO**.  
+## Installation
+1. Download or clone this repo into `/wp-content/plugins/fomozo`.  
+2. Activate **FOMOZO** in your WordPress dashboard.  
+3. Find settings under **FOMOZO > SETTINGS**.  
 
-== Frequently Asked Questions ==
-= Does FOMOZO work without WooCommerce? =  
-Currently, no — FOMOZO only integrates with WooCommerce. More integrations (including newsletter plugins) are planned.  
+---
 
-= Can I customize the sales notification text? =  
-Yes, you can change the message content and where it appears.  
+## Roadmap
+- 📩 Newsletter subscription notifications (integrations with top marketing plugins)  
+- ⭐ Customer review popups  
+- 🎉 Custom event notifications  
 
-== Screenshots ==
-1. Example WooCommerce sales notification on the front-end.  
-2. FOMOZO Dashboard inside WordPress.  
-3. Campaigns page where you manage your notifications.  
+---
 
-== Changelog ==
-= 0.1.0 =  
-* Initial release with WooCommerce sales notifications.  
+## License
+This plugin is licensed under the [GPL v3 or later](https://www.gnu.org/licenses/gpl-3.0.html).  
 
-== Upgrade Notice ==
-= 0.1.0 =  
-First release of FOMOZO with WooCommerce sales notifications.  
+---
+
+## Contributing
+Pull requests are welcome! For major changes, please open an issue first to discuss what you’d like to change.  
+
+---
+
+## Author
+👨‍💻 Developed by **FOMOZO Team**  
