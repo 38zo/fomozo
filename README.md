@@ -4,9 +4,6 @@
 FOMOZO helps boost conversions on your WordPress site by showing **real-time WooCommerce sales notifications**.  
 When visitors see others purchasing, it builds **trust** and creates **urgency (FOMO)** — leading to more sales.
 
-👉 Current focus: WooCommerce sales notifications  
-✨ Coming soon: Newsletter subscriptions, reviews, and more integrations  
-
 ---
 
 ## Features
@@ -23,12 +20,6 @@ When visitors see others purchasing, it builds **trust** and creates **urgency (
 2. Activate **FOMOZO** in your WordPress dashboard.  
 3. Find settings under **FOMOZO > SETTINGS**.  
 
----
-
-## Roadmap
-- 📩 Newsletter subscription notifications (integrations with top marketing plugins)  
-- ⭐ Customer review popups  
-- 🎉 Custom event notifications  
 
 ---
 

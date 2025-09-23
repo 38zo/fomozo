@@ -8,7 +8,7 @@ class IntegrationManager {
 
 	public function __construct() {
 		// Allow third-parties to register
-		do_action('fomozo_integrations_register', $this);
+		do_action( 'fomozo_integrations_register', $this);
 		$this->load_active_state();
 	}
 
@@ -21,38 +21,38 @@ class IntegrationManager {
 	}
 
 	public function get_active_ids() {
-		$ids = get_option('fomozo_integrations_active', []);
-		return is_array($ids) ? $ids : [];
+		$ids = get_option( 'fomozo_integrations_active', []);
+		return is_array( $ids) ? $ids : [];
 	}
 
-	public function is_active($id) {
-		return in_array($id, $this->get_active_ids(), true);
+	public function is_active( $id) {
+		return in_array( $id, $this->get_active_ids(), true);
 	}
 
-	public function activate($id) {
+	public function activate( $id) {
 		$ids = $this->get_active_ids();
-		if (!in_array($id, $ids, true)) {
+		if (!in_array( $id, $ids, true) ) {
 			$ids[] = $id;
-			update_option('fomozo_integrations_active', $ids);
-			if (isset($this->integrations[$id])) {
+			update_option( 'fomozo_integrations_active', $ids);
+			if (isset( $this->integrations[$id]) ) {
 				$this->integrations[$id]->activate();
 				$this->integrations[$id]->register_hooks();
 			}
 		}
 	}
 
-	public function deactivate($id) {
-		$ids = array_values(array_filter($this->get_active_ids(), function($x) use ($id) { return $x !== $id; }));
-		update_option('fomozo_integrations_active', $ids);
-		if (isset($this->integrations[$id])) {
+	public function deactivate( $id) {
+		$ids = array_values(array_filter( $this->get_active_ids(), function( $x ) use ( $id ) { return $x !== $id; } ) );
+		update_option( 'fomozo_integrations_active', $ids );
+		if ( isset( $this->integrations[$id] ) ) {
 			$this->integrations[$id]->deactivate();
 		}
 	}
 
 	private function load_active_state() {
 		$active = $this->get_active_ids();
-		foreach ($active as $id) {
-			if (isset($this->integrations[$id])) {
+		foreach ( $active as $id ) {
+			if ( isset( $this->integrations[$id] ) ) {
 				$this->integrations[$id]->register_hooks();
 			}
 		}

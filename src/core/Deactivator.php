@@ -24,7 +24,7 @@
          flush_rewrite_rules();
          
          // Set deactivation flag
-         update_option('fomozo_deactivated', current_time('mysql'));
+         update_option( 'fomozo_deactivated', current_time('mysql') );
      }
      
      /**
@@ -32,7 +32,7 @@
       */
      private static function clear_scheduled_events() {
          // Clear any wp-cron events
-         wp_clear_scheduled_hook('fomozo_cleanup_analytics');
+         wp_clear_scheduled_hook( 'fomozo_cleanup_analytics' );
      }
  }
  

@@ -1,6 +1,6 @@
 === FOMOZO – Social Proof & FOMO Notifications ===
 Contributors: lewisushindi
-Tags: woocommerce, social proof, fomo, sales, notifications, newsletter, marketing
+Tags: social proof, fomo, sales, notifications, marketing
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -16,10 +16,7 @@ When visitors see that others are buying, they are more likely to take action �
 
 Right now, FOMOZO integrates with WooCommerce to display recent sales.  
 
-🚀 **More features and integrations are coming soon**, including:  
-* Newsletter subscriptions (integrating with popular marketing plugins)  
-* Customer reviews  
-* Custom events  
+🚀 **More features and integrations are coming soon**
 
 == Features ==
 * Display recent WooCommerce sales notifications  

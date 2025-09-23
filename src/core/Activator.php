@@ -22,8 +22,8 @@ class Activator {
         self::create_pages();
         
         // Set activation flag
-        update_option('fomozo_activated', true);
-        update_option('fomozo_version', FOMOZO_VERSION);
+        update_option( 'fomozo_activated', true );
+        update_option( 'fomozo_version', FOMOZO_VERSION );
         
         // Flush rewrite rules
         flush_rewrite_rules();
@@ -71,8 +71,8 @@ class Activator {
         ) $charset_collate;";
         
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-        dbDelta($campaigns_sql);
-        dbDelta($analytics_sql);
+        dbDelta( $campaigns_sql );
+        dbDelta( $analytics_sql );
     }
     
     /**
@@ -88,7 +88,7 @@ class Activator {
             'fomozo_gap_ms' => 4000
         ];
         
-        foreach ($defaults as $option => $value) {
+        foreach ( $defaults as $option => $value ) {
             add_option($option, $value);
         }
     }

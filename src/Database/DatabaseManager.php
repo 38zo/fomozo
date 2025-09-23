@@ -138,6 +138,96 @@ class DatabaseManager {
 			)
 		);
 	}
+
+	/**
+	 * Check if required tables exist
+	 *
+	 * @return bool
+	 */
+	public function tablesExist() {
+		$campaigns_exists = $this->db->get_var(
+			$this->db->prepare(
+				"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+				DB_NAME,
+				$this->tableCampaigns
+			)
+		);
+
+		$analytics_exists = $this->db->get_var(
+			$this->db->prepare(
+				"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+				DB_NAME,
+				$this->tableAnalytics
+			)
+		);
+
+		return (bool) $campaigns_exists && (bool) $analytics_exists;
+	}
+
+	/**
+	 * Ensure tables exist, recreate if missing
+	 *
+	 * @return bool True if tables exist or were created successfully
+	 */
+	public function ensureTablesExist() {
+		if ( $this->tablesExist() ) {
+			return true;
+		}
+
+		// Tables don't exist, recreate them
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		
+		$charset_collate = $this->db->get_charset_collate();
+		
+		// Campaigns table
+		$campaigns_sql = "CREATE TABLE {$this->tableCampaigns} (
+			id int(11) NOT NULL AUTO_INCREMENT,
+			name varchar(255) NOT NULL,
+			type varchar(50) NOT NULL,
+			status varchar(20) DEFAULT 'active',
+			settings longtext,
+			start_date datetime DEFAULT NULL,
+			end_date datetime DEFAULT NULL,
+			created_at datetime DEFAULT CURRENT_TIMESTAMP,
+			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY type (type),
+			KEY status (status)
+		) $charset_collate;";
+		
+		// Analytics table
+		$analytics_sql = "CREATE TABLE {$this->tableAnalytics} (
+			id int(11) NOT NULL AUTO_INCREMENT,
+			campaign_id int(11) NOT NULL,
+			type varchar(50) NOT NULL,
+			user_ip varchar(45),
+			user_agent text,
+			page_url varchar(500),
+			created_at datetime DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY campaign_id (campaign_id),
+			KEY type (type),
+			KEY created_at (created_at)
+		) $charset_collate;";
+		
+		$result1 = dbDelta( $campaigns_sql );
+		$result2 = dbDelta( $analytics_sql );
+		
+		// Check if tables were created successfully
+		return $this->tablesExist();
+	}
+
+	/**
+	 * Get table names for debugging
+	 *
+	 * @return array
+	 */
+	public function getTableNames() {
+		return [
+			'campaigns' => $this->tableCampaigns,
+			'analytics' => $this->tableAnalytics
+		];
+	}
 }
 
 
