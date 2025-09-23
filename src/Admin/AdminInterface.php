@@ -636,6 +636,10 @@ class AdminInterface {
                 }
                 $html .= '</select>';
                 return $html;
+            case 'custom_button':
+                $btn_id = esc_attr($field['attrs']['id'] ?? $id);
+                $btn_class = esc_attr($field['attrs']['class'] ?? 'button');
+                return '<button type="button" id="' . $btn_id . '" class="' . $btn_class . '">' . esc_html($field['title']) . '</button>';
             case 'text':
             default:
                 return '<input type="text" id="' . esc_attr($id) . '" name="' . esc_attr($id) . '" value="' . esc_attr($value) . '"' . $attr_html . ' />';

@@ -69,11 +69,11 @@ class Settings {
 							'title' => __('Uninstall', 'fomozo'),
 							'fields' => [
 								[
-									'id' => 'fomozo_remove_data_on_uninstall',
-									'title' => __('Remove all plugin data on uninstall', 'fomozo'),
-									'type' => 'checkbox',
-									'default' => 0,
-									'desc' => __('Irreversible: deletes tables and options when the plugin is deleted.', 'fomozo')
+									'id' => 'fomozo_wipe_data_button',
+									'title' => __('Delete All Plugin Data', 'fomozo'),
+									'type' => 'custom_button',
+									'attrs' => ['id' => 'fomozo-wipe-data', 'class' => 'button button-secondary'],
+									'desc' => __('Permanently remove all FOMOZO data (campaigns, impressions, settings).', 'fomozo')
 								]
 							]
 						]

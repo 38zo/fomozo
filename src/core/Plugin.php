@@ -58,6 +58,9 @@ class Plugin {
         add_action('wp_ajax_nopriv_fomozo_get_notifications', [$this, 'ajax_get_notifications']);
         add_action('wp_ajax_fomozo_track_impression', [$this, 'ajax_track_impression']);
         add_action('wp_ajax_nopriv_fomozo_track_impression', [$this, 'ajax_track_impression']);
+
+        // Admin cleanup endpoint
+        add_action('wp_ajax_fomozo_wipe_data', [$this, 'ajax_wipe_data']);
     }
     
     /**
@@ -401,6 +404,40 @@ class Plugin {
         }
         
         return $ip;
+    }
+
+    /**
+     * AJAX: Wipe all plugin data (admin only)
+     */
+    public function ajax_wipe_data() {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('Unauthorized', 'fomozo'));
+        }
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'fomozo_admin_nonce')) {
+            wp_send_json_error(__('Invalid nonce', 'fomozo'));
+        }
+
+        global $wpdb;
+        // Delete options
+        $options = [
+            'fomozo_enable_sound',
+            'fomozo_animation_speed',
+            'fomozo_default_delay',
+            'fomozo_default_duration',
+            'fomozo_anonymize_users',
+            'fomozo_gap_ms',
+            'fomozo_activated',
+            'fomozo_version',
+            'fomozo_integrations_active',
+            'fomozo_remove_data_on_uninstall'
+        ];
+        foreach ($options as $opt) { delete_option($opt); }
+
+        // Drop tables
+        $wpdb->query('DROP TABLE IF EXISTS ' . $wpdb->prefix . 'fomozo_campaigns');
+        $wpdb->query('DROP TABLE IF EXISTS ' . $wpdb->prefix . 'fomozo_analytics');
+
+        wp_send_json_success();
     }
     
     /**
