@@ -1,0 +1,56 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: FOMOZO 0.1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/fomozo\n"
+"POT-Creation-Date: 2025-09-23 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: FOMOZO POT template\n"
+"X-Domain: fomozo\n"
+
+#: src/Admin/AdminInterface.php
+msgid "FOMOZO"
+msgstr ""
+
+#: src/Admin/AdminInterface.php
+msgid "Dashboard"
+msgstr ""
+
+#: src/Admin/AdminInterface.php
+msgid "Campaigns"
+msgstr ""
+
+#: src/Admin/AdminInterface.php
+msgid "Settings"
+msgstr ""
+
+#: src/Admin/AdminInterface.php
+msgid "Integrations"
+msgstr ""
+
+#: src/Admin/AdminInterface.php
+msgid "Create New Campaign"
+msgstr ""
+
+#: src/Admin/AdminInterface.php
+msgid "Create Your First Campaign"
+msgstr ""
+
+#: src/Admin/AdminInterface.php
+msgid "Select Integration"
+msgstr ""
+
+#: src/Admin/AdminInterface.php
+msgid "Select Campaign Type"
+msgstr ""
+
+#: src/Admin/AdminInterface.php
+msgid "Who should see it?"
+msgstr ""
+
+#: src/core/Plugin.php
+msgid "ago"
+msgstr ""
+
+

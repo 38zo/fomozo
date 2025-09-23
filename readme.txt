@@ -1,8 +1,8 @@
-=== FOMOZO ===
-Contributors: fomozo
+=== FOMOZO – Social Proof & FOMO Notifications ===
+Contributors: lewisushindi
 Tags: woocommerce, social proof, fomo, sales, notifications, newsletter, marketing
 Requires at least: 5.0
-Tested up to: 6.6
+Tested up to: 6.8
 Requires PHP: 7.4
 Stable tag: 0.1.0
 License: GPLv3 or later
