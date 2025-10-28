@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: FOMOZO – Social Proof & FOMO Notifications
+ * Plugin Name: Fomozo
  * Description: Social Proof & FOMO Notifications for WordPress
  * Version: 0.1.0
- * Author: FOMOZO Team
+ * Author: 38zo
  * License: GPL v3 or later
  * Text Domain: fomozo
  * Requires at least: 5.0
