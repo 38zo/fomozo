@@ -74,19 +74,19 @@ class Plugin {
         $this->database->ensureTablesExist();
         
         // Initialize admin interface
-        if (is_admin() ) {
+        if ( is_admin() ) {
             $this->admin = new AdminInterface();
         }
         
         // Initialize frontend display (only if not admin)
-        if ( !is_admin() ) {
+        if ( ! is_admin() ) {
             $this->frontend = new DisplayManager();
         }
 
         // Initialize integrations and register built-ins via action so any manager instance sees them
         add_action( 'fomozo_integrations_register', function( $manager) {
             // Register built-in WooCommerce integration
-            $manager->register(new WooCommerceIntegration() );
+            $manager->register( new WooCommerceIntegration() );
         });
         $this->integrations = new IntegrationManager();
     }
@@ -107,7 +107,7 @@ class Plugin {
      */
     public function enqueue_frontend_assets() {
         // Only load on pages where notifications might display
-        if ( !$this->should_load_frontend_assets() ) {
+        if ( ! $this->should_load_frontend_assets() ) {
             return;
         }
         
@@ -137,9 +137,9 @@ class Plugin {
     /**
      * Enqueue admin assets
      */
-    public function enqueue_admin_assets( $hook) {
+    public function enqueue_admin_assets( $hook ) {
         // Only load on FOMOZO admin pages
-        if ( !$this->is_fomozo_admin_page( $hook) ) {
+        if ( ! $this->is_fomozo_admin_page( $hook ) ) {
             return;
         }
         
@@ -171,7 +171,7 @@ class Plugin {
         // Get active campaigns
         $campaigns = $this->get_active_campaigns();
         
-        if (empty( $campaigns) ) {
+        if ( empty( $campaigns ) ) {
             return false;
         }
         
@@ -188,14 +188,14 @@ class Plugin {
     /**
      * Check if current admin page is FOMOZO page
      */
-    private function is_fomozo_admin_page( $hook) {
+    private function is_fomozo_admin_page( $hook ) {
         $fomozo_pages = [
             'toplevel_page_fomozo',
             'fomozo_page_fomozo-campaigns',
             'fomozo_page_fomozo-settings'
         ];
         
-        return in_array( $hook, $fomozo_pages, true);
+        return in_array( $hook, $fomozo_pages, true );
     }
     
     /**
@@ -203,10 +203,10 @@ class Plugin {
      */
     private function get_frontend_settings() {
         return [
-            'enable_sound' => get_option( 'fomozo_enable_sound', false),
-            'animation_speed' => get_option( 'fomozo_animation_speed', 500),
+            'enable_sound' => get_option( 'fomozo_enable_sound', false ),
+            'animation_speed' => get_option( 'fomozo_animation_speed', 500 ),
             'debug_mode' => defined( 'WP_DEBUG' ) && WP_DEBUG,
-            'gap_ms' => (int) get_option( 'fomozo_gap_ms', 4000)
+            'gap_ms' => (int) get_option( 'fomozo_gap_ms', 4000 )
         ];
     }
     
@@ -227,8 +227,8 @@ class Plugin {
     /**
      * Check if campaign should display on current page
      */
-    private function campaign_should_display( $campaign) {
-        $settings = json_decode( $campaign->settings, true);
+    private function campaign_should_display( $campaign ) {
+        $settings = json_decode( $campaign->settings, true );
         $display_rules = $settings['display_rules'] ?? [];
         
         // For MVP: only sitewide display
@@ -240,7 +240,7 @@ class Plugin {
      */
     public function ajax_get_notifications() {
         // Verify nonce
-        if ( !wp_verify_nonce( $_POST['nonce'] ?? '', 'fomozo_nonce' ) ) {
+        if ( ! wp_verify_nonce( $_POST['nonce'] ?? '', 'fomozo_nonce' ) ) {
             wp_send_json_error( 'Invalid nonce' );
         }
         
@@ -254,7 +254,7 @@ class Plugin {
      */
     public function ajax_track_impression() {
         // Verify nonce
-        if ( !wp_verify_nonce( $_POST['nonce'] ?? '', 'fomozo_nonce' ) ) {
+        if ( ! wp_verify_nonce( $_POST['nonce'] ?? '', 'fomozo_nonce' ) ) {
             wp_send_json_error( 'Invalid nonce' );
         }
         
@@ -283,7 +283,7 @@ class Plugin {
                 }
             }
         }
-        // Allow integrations to provide notifications (e.g., WooCommerce)
+        // Allow integrations to provide notifications (e.g., WooCommerce, Noptin)
         $external = apply_filters( 'fomozo_external_notifications', [], $campaigns );
         if ( is_array( $external ) ) {
             $notifications = array_merge( $notifications, $external );
@@ -295,8 +295,8 @@ class Plugin {
     /**
      * Generate sales notification
      */
-    private function generate_sales_notification( $campaign) {
-        $settings = json_decode( $campaign->settings, true);
+    private function generate_sales_notification( $campaign ) {
+        $settings = json_decode( $campaign->settings, true );
         
         // Demo generator only when explicitly enabled
         $recent_sale = null;
@@ -312,7 +312,7 @@ class Plugin {
             'id' => $campaign->id,
             'type' => 'sales',
             'template' => $settings['template'] ?? 'bottom-left',
-            'message' => $this->format_sales_message( $recent_sale, $settings),
+            'message' => $this->format_sales_message( $recent_sale, $settings ),
             'delay' => $settings['delay'] ?? 3000,
             'duration' => $settings['duration'] ?? 5000,
             'settings' => $settings
@@ -366,12 +366,12 @@ class Plugin {
      */
     private function generate_anonymous_name( $anonymize = true ) {
         if ( ! $anonymize ) {
-            $first_names = ['John', 'Jane', 'Mike', 'Sarah', 'David', 'Lisa'];
+            $first_names = ['Lewis', 'Sandra', 'Brian', 'Faith', 'James', 'Brenda'];
             $last_names = ['Smith', 'Johnson', 'Brown', 'Davis', 'Wilson', 'Moore'];
             return $first_names[array_rand( $first_names )] . ' ' . $last_names[array_rand( $last_names )];
         }
         
-        $first_names = ['John', 'Jane', 'Mike', 'Sarah', 'David', 'Lisa'];
+        $first_names = ['Lewis', 'Sandra', 'Brian', 'Faith', 'James', 'Brenda'];
         return $first_names[array_rand( $first_names )] . ' D.';
     }
     

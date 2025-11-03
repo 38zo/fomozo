@@ -1,5 +1,5 @@
 === FOMOZO – Social Proof & FOMO Notifications ===
-Contributors: lewisushindi
+Contributors: lewisushindi, 38zo
 Tags: social proof, fomo, sales, notifications, marketing
 Requires at least: 5.0
 Tested up to: 6.8
@@ -51,4 +51,4 @@ Yes, you can change the message content and where it appears.
 
 == Upgrade Notice ==
 = 0.1.0 =  
-First release of FOMOZO with WooCommerce sales notifications.  
+First release of FOMOZO with WooCommerce sales notifications. 

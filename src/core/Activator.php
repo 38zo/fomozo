@@ -98,6 +98,6 @@ class Activator {
      */
     private static function create_pages() {
         // For MVP, no special pages needed
-        // Later: privacy policy additions, opt-out pages, etc.
+        // Later: opt-out pages, etc.
     }
 }

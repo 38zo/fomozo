@@ -8,6 +8,10 @@
 
 namespace FOMOZO\Admin;
 
+use FOMOZO\Core\Settings;
+use FOMOZO\Integrations\IntegrationManager;
+use FOMOZO\Database\DatabaseManager;
+
 /**
  * Admin interface handler
  */
@@ -24,7 +28,7 @@ class AdminInterface {
      * Integrations page
      */
     public function integrations_page() {
-        $manager = new \FOMOZO\Integrations\IntegrationManager();
+        $manager = new IntegrationManager();
         $all = $manager->get_all();
         $query = isset( $_GET['s'] ) ? sanitize_text_field( $_GET['s'] ) : '';
         if ( ! empty( $_POST['fomozo_toggle_integration']) && check_admin_referer( 'fomozo_integrations' ) ) {
@@ -122,7 +126,7 @@ class AdminInterface {
             return;
         }
 
-        $db_manager = new \FOMOZO\Database\DatabaseManager();
+        $db_manager = new DatabaseManager();
         if ( ! $db_manager->ensureTablesExist() ) {
             add_action(
                 'admin_notices',
@@ -141,8 +145,8 @@ class AdminInterface {
     public function add_admin_menu() {
         // Main menu page
         add_menu_page(
-            __( 'FOMOZO', 'fomozo' ),
-            __( 'FOMOZO', 'fomozo' ),
+            __( 'Fomozo', 'fomozo' ),
+            __( 'Fomozo', 'fomozo' ),
             'manage_options',
             'fomozo',
             [$this, 'dashboard_page'],
@@ -299,7 +303,7 @@ class AdminInterface {
     }
 
     private function render_wizard_pick_integration() {
-        $manager = new \FOMOZO\Integrations\IntegrationManager();
+        $manager = new IntegrationManager();
         $all = $manager->get_all();
         ?>
         <div class="wrap">
@@ -592,7 +596,7 @@ class AdminInterface {
      * @return void
      */
     public function settings_page() {
-        $schema     = \FOMOZO\Core\Settings::get_schema();
+        $schema     = Settings::get_schema();
         $active_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : array_key_first( $schema['tabs'] );
 
         if ( ! isset( $schema['tabs'][ $active_tab ] ) ) {
@@ -652,7 +656,7 @@ class AdminInterface {
     private function render_field( $field ) {
         $id     = $field['id'];
         $type   = $field['type'] ?? 'text';
-        $value  = \FOMOZO\Core\Settings::get( $id, $field['default'] ?? '' );
+        $value  = Settings::get( $id, $field['default'] ?? '' );
         $attrs  = $field['attrs'] ?? [];
         $attr_html = '';
 
@@ -724,7 +728,7 @@ class AdminInterface {
      */
     private function save_campaign() {
         // Ensure database tables exist before attempting to save
-        $db_manager = new \FOMOZO\Database\DatabaseManager();
+        $db_manager = new DatabaseManager();
         if ( ! $db_manager->ensureTablesExist() ) {
             add_action(
                 'admin_notices',
@@ -797,14 +801,14 @@ class AdminInterface {
      * @return void
      */
     private function save_settings() {
-        $schema = \FOMOZO\Core\Settings::get_schema();
+        $schema = Settings::get_schema();
 
         foreach ( $schema['tabs'] as $tab ) {
             foreach ( $tab['sections'] as $section ) {
                 foreach ( $section['fields'] as $field ) {
                     $id        = $field['id'];
                     $raw       = isset( $_POST[ $id ] ) ? wp_unslash( $_POST[ $id ] ) : null;
-                    $sanitized = \FOMOZO\Core\Settings::sanitize_field( $field, $raw );
+                    $sanitized = Settings::sanitize_field( $field, $raw );
                     update_option( $id, $sanitized );
                 }
             }
@@ -875,7 +879,7 @@ class AdminInterface {
      * @return array|null
      */
     private function get_campaigns() {
-        $db_manager = new \FOMOZO\Database\DatabaseManager();
+        $db_manager = new DatabaseManager();
         
         // Ensure tables exist before querying
         if ( ! $db_manager->ensureTablesExist() ) {
@@ -893,7 +897,7 @@ class AdminInterface {
      * @return object|null
      */
     private function get_campaign( $id ) {
-        $db_manager = new \FOMOZO\Database\DatabaseManager();
+        $db_manager = new DatabaseManager();
         
         // Ensure tables exist before querying
         if ( ! $db_manager->ensureTablesExist() ) {
@@ -910,7 +914,7 @@ class AdminInterface {
      * @return int
      */
     private function get_campaign_impressions( $campaign_id ) {
-        $db_manager = new \FOMOZO\Database\DatabaseManager();
+        $db_manager = new DatabaseManager();
         
         // Ensure tables exist before querying
         if ( ! $db_manager->ensureTablesExist() ) {
@@ -927,7 +931,7 @@ class AdminInterface {
      * @return void
      */
     private function delete_campaign( $campaign_id ) {
-        $db_manager = new \FOMOZO\Database\DatabaseManager();
+        $db_manager = new DatabaseManager();
         
         // Ensure tables exist before attempting to delete
         if ( ! $db_manager->ensureTablesExist() ) {
